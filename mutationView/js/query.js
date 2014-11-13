@@ -130,6 +130,7 @@ var search = function(geneID){
 				// draw the transcripts in the scrollable box 
 					drawTranscripts(exonsOnEachTranscript, transcriptMutationList);
 					drawDNA()
+					drawmRNA()
 		
 		},
 		error: function(err){

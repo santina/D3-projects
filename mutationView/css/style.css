@@ -34,6 +34,18 @@ svg {
     height: 100%;
 }
 
+/* for the RNA box*/ 
+.mRNA{
+    width: 100%;
+    height: 50px;
+    overflow: auto;
+}
+svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
 /* for handling scrolling, allow overflowing */ 
 .outer {
     width: 100%;
@@ -45,7 +57,7 @@ svg {
     height: 301px;
 }
 
-// for pop-up box
+/* for pop-up box*/
 .d3-tip {
   line-height: 1;
   font-weight: bold;
@@ -76,6 +88,7 @@ svg {
 }
 
 
+/* for our search box, some effects don't seem to work... */
 
 form {
 	width:200px;
