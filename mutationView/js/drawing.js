@@ -1,6 +1,6 @@
-/* this is a temporary in which things are read from the JSON objects stored in files 
+/* this is where everything is drawn. Also can be modified, together with html, to read JSON objects stored in files 
  the content of the files come from the results (with some processing) in query.js
- this is so that I can work on the drawing without having to rely on the bioportal server */
+ this is so that I can work on the drawing without having to rely on the cbioportal server */
 
 
 //class is for a group of elements, id for one specific one... will fix that later. 
@@ -13,10 +13,10 @@ var drawDNA = function(){
 	
 	var DNAgraph = chart.append("svg")
     .attr("width", "1000") // change from 100% 
-    .attr("height",100); 
+    .attr("height",300); 
 	
 	var DNA = DNAgraph.append("rect")
-	.attr("height", 30)
+	.attr("height", 200)
 	.attr("y", 20)
 	.attr("x", 0)
 	.attr("width", 1000)  //according to the random number I put for drawTranscripts
@@ -24,11 +24,10 @@ var drawDNA = function(){
 	.attr("fill-opacity", 0.3)
 	.attr("class", "DNAstrip")
 	.on("mouseover", function(){
-		//d3.select(this).style("fill", "red");
-
+		
 	})
 	.on("mouseout", function(){
-		//d3.select(this).style("fill", "steelblue");
+		
 	});
 
 
@@ -146,14 +145,15 @@ var drawTranscripts = function(exonsOnEachTranscript, mutationsOnEachTranscript)
 		.attr("height", transcriptHeight-2)
 		.attr("fill", "grey")
 		.attr("id", transcript) //change the name 
+		.attr("class", "highlightrect")
 		.attr("fill-opacity", 0)
 		.on("mouseover", function(){
-			d3.select(this).style("fill-opacity", 0.4);
 		})
 		.on("mouseout", function(){
-			d3.select(this).style("fill-opacity", 0);
 		})
 		.on("click", function(){
+			RNAgraph.selectAll(".highlightrect").classed("highlightrect-active", false);
+			d3.select(this).classed("highlightrect-active", true);
 			drawMutations(mutationsOnEachTranscript[this.getAttribute("id")]);
 			drawSplicedRNA(this.getAttribute("id"), exonsOnEachTranscript, mutationsOnEachTranscript); 
 		});
@@ -217,6 +217,14 @@ var tip = d3.tip()
     return "<strong>Site:</strong> <span style='color:red'>" + d.site + "</span> \n"
     		+ "<strong>Counts:</strong> <span style='color:red'>" + d.count + "</span>";
   })
+  
+
+function endall(transition, callback) { 
+    var n = 0; 
+    transition 
+        .each(function() { ++n; }) 
+        .each("end", function() { if (!--n) callback.apply(this, arguments); }); 
+  } 
 
 
 // need fix to get lollipop 
@@ -229,46 +237,84 @@ var drawMutations = function(mutations){
     
     
     var DNA = d3.select(".DNA").select("svg");
-    //var DNAy = DNA.getAttribute("y"); //why doesn't this run?
-    
-     DNA.call(tip);
-
-	var mutationLines = DNA.selectAll("line").data(mutations);
 	
-	mutationLines.enter()
-		.append("line")
-		.attr("x1", function(d){return x(d.site)}) 
-		.attr("y1", 50)
-		.attr("x2", function(d){return x(d.site)}) 
-		.attr("y2", function(d) { return 50 - d.count*15; })
-		.attr("stroke-width", 1)
-		.attr("stroke", function(d) { return color(d.count*2); })
-		.on('mouseover', tip.show) //testing tool tip
- 		.on('mouseout', tip.hide);
+	
+	//DNA.selectAll(".scaledMutationLine").remove();
+	if (!DNA.selectAll(".scaledMutationLine").empty()) {
+		DNA.selectAll(".scaledMutationLine").transition().duration(750).attr("y2", 50).call(endall, function() {
+			DNA.selectAll(".scaledMutationLine").remove();
 		
-	mutationLines.exit().remove();
+			//can't figure out a way to add transition to this without messing up the new mutation lines
+	
 
-	// for drawing circles instead 
-// 	var mutationDots = DNA.selectAll("circle").data(mutations);
-// 	
-// 	mutationDots.enter()
-// 		.append("circle")
-// 		.attr("cx", function(d) {return x(d.site); })
-// 		.attr("cy", 20)
-// 		.attr("r", function(d) { return d.count*5; })
-// 		.style("fill", function(d) { return color(d.count); })
-// 		.attr("fill-opacity", 0.8)
-// 		.on('mouseover', tip.show) //testing tool tip
-// 		.on('mouseout', tip.hide)
-// 		.transition()
-//       		.duration(750); // doesn't seem to work 
-// 	mutationDots.exit().transition().remove(); 
+	
+			 DNA.call(tip);
+
+			var mutationLines = DNA.selectAll("line").data(mutations);
+	
+			mutationLines.enter()
+				.append("line")
+				.attr("x1", function(d){return x(d.site)}) 
+				.attr("y1", 50)
+				.attr("x2", function(d){return x(d.site)}) 
+				.attr("y2", 50)
+				.attr("class", "mutationLines")
+				.attr("stroke-width", 1)
+				.attr("stroke", function(d) { return color(d.count*2); })
+				.on('mouseover', tip.show) //testing tool tip
+				.on('mouseout', tip.hide)
+				.transition()
+					.duration(1000)
+					.attr("y2", function(d) { return 50 - d.count*15; });
+		
+			mutationLines.exit().transition()
+								.duration(1000)
+								.attr("y2", 50)
+								.remove();
+		});
+	
+ 	} else {
+ 		
+	
+		 DNA.call(tip);
+
+		var mutationLines = DNA.selectAll("line").data(mutations);
+	
+		mutationLines.enter()
+			.append("line")
+			.attr("x1", function(d){return x(d.site)}) 
+			.attr("y1", 50)
+			.attr("x2", function(d){return x(d.site)}) 
+			.attr("y2", 50)
+			.attr("class", "mutationLines")
+			.attr("stroke-width", 1)
+			.attr("stroke", function(d) { return color(d.count*2); })
+			.on('mouseover', tip.show) //testing tool tip
+			.on('mouseout', tip.hide)
+			.transition()
+				.duration(1000)
+				.attr("y2", function(d) { return 50 - d.count*15; });
+		
+		mutationLines.exit().transition()
+							.duration(1000)
+							.attr("y2", 50)
+							.remove();
+
+ 	}
 	
 }
+
+
+
+/* store what index in the spliceRNA bar is matched to what position (actual number) of exon
+this would help us map the mutations in exons correctly as we expand them on the DNA bar*/
+var indexMatchArray = [];  
 
 var drawSplicedRNA = function (className, exonsOnEachTranscript, mutationsOnEachTranscript){
 	//drawmRNA()
 	
+	var indicesMatch = []; 
+		
 	//makeshift solution. still don't understand why exit() doesn't work. 
 	d3.select(".mRNA").select("svg").selectAll("line").remove(); 
 	
@@ -283,7 +329,6 @@ var drawSplicedRNA = function (className, exonsOnEachTranscript, mutationsOnEach
     .range([0, 1000]);
 	
 	
-	
 	// to make it easier, we sort the exons by their start sites first 
 	// and then we draw the boundaries
 	exonsList.sort(function(a, b){return a["start"]-b["start"];}) //increasing 
@@ -295,17 +340,26 @@ var drawSplicedRNA = function (className, exonsOnEachTranscript, mutationsOnEach
 	exonLines.enter()
 		.append("line")
 		.attr("x1",function(d){ 
+			indicesMatch.push([RNAscale(currentStartSite), d.start]);
 			currentStartSite = currentStartSite + (d.end - d.start); 
-			; return RNAscale(currentStartSite); }) 
+			indicesMatch.push([RNAscale(currentStartSite), d.end]);
+			return RNAscale(currentStartSite); }) 
 		.attr("y1", 20)
 		.attr("x2", function(d){ 
 			currentStartSite2 = currentStartSite2 + (d.end - d.start); 
-			; return RNAscale(currentStartSite2); }) 
+			return RNAscale(currentStartSite2); }) 
 		.attr("y2", 50)
 		.attr("stroke-width", 1)
-		.attr("stroke", "black");
+		.attr("stroke", "black")
+		.attr("opacity", 0)
+		.transition()
+			.duration(750)
+			.attr("opacity", 0.9);
 		
-	exonLines.exit().remove(); //works kind of weirdly. not the way i want it to.
+	exonLines.exit().transition()
+			.duration(750)
+			.attr("opacity", 0)
+			.remove(); //works kind of weirdly. not the way i want it to.
 	
 	//make the inactive spliced RNA bar suddenly interactive, hinting you can click on it 
 	var RNAbar = d3.select("#mRNA_spliced"); //select by ID
@@ -316,27 +370,87 @@ var drawSplicedRNA = function (className, exonsOnEachTranscript, mutationsOnEach
 				d3.select(this).style("fill", "rgb(148, 58, 190)");
 			})
 			.on("click", function(){
-				console.log("make the DNA transition to show mutations on exons only");
 				console.log(className);
 				redrawMutations(className, exonsOnEachTranscript, mutationsOnEachTranscript);
+				redrawMutations2();
 			});
+			
+	
+	indexMatchArray = indicesMatch; //set global variable, so that we can use it in redrawMutation()
 }
 
 
 var redrawMutations = function(className, exonsOnEachTranscript, mutationsOnEachTranscript){
-	d3.select(".DNA").select("svg").selectAll("line").remove();
+	
+	var DNA = d3.select(".DNA").select("svg");
+	DNA.selectAll("line").remove();
+	DNA.call(tip);
 	
 	mutationList = mutationsOnEachTranscript[className];
 	exonList = exonsOnEachTranscript[className]; 
 	inRangeMutations = mutationInRange(exonList, mutationList);
 	//console.log(inRangeMutations);
+	//some crazy loop goes here 
+	
+	for (mutation in inRangeMutations){
+		var position; //scaled/mutated position of the mutation on DNA bar
+		for (i in indexMatchArray){
+			var m = inRangeMutations[mutation];
+			if (indexMatchArray[i][1] > m.site){
+				position = m.site - indexMatchArray[i-1][1] + indexMatchArray[i-1][0];
+				m.position = position; 
+				break;
+			}
+		}
+	
+	}
+	var mutationLines = DNA.selectAll("line").data(inRangeMutations);
+	
+	mutationLines.enter()
+		.append("line")
+		.attr("x1", function(d){return d.position;}) 
+		.attr("y1", 50)
+		.attr("x2", function(d){return d.position;}) 
+		.attr("y2", function(d) { return 50 - d.count*15; })
+		.attr("stroke-width", 2)
+		.attr("stroke", function(d) { return color(d.count*2); })
+		.attr("class", "scaledMutationLine")
+		.on('mouseover', function(d){
+			tip.show 
+			DNA.append("circle")
+			.attr("cx", d.position )
+			.attr("cy", (50 - d.count*15))
+			.attr("r",  d.count*5 )
+			.style("fill",  color(d.count) )
+			.attr("fill-opacity", 0.8);
 
+		})
+ 		.on('mouseout', function(d){
+			tip.hide 
+			DNA.selectAll("circle").remove();
+
+		})
+		
+	mutationLines.exit().remove();
 	
-	
-	//don't forget your scaling 
 }
 
-//return a boolean 
+var redrawMutations2 = function(){
+
+	d3.select(".DNA").select("svg").selectAll("line").each(function (d,i) {
+		var position = d3.select(this).attr("x1");
+		if (position > 500){
+			d3.select(this).remove
+		}
+		else{
+		
+		}
+	});
+		
+
+}
+
+
 //this method seems to be a computationally expensive/dumb way to check things  
 var mutationInRange = function(exonList, mutationList){
 	var list = [];
@@ -360,6 +474,7 @@ var checkInRange = function(exonList, mutation){
 }
 
 //enable those two if you want to run this without accessing cbioportal 
+// also fix the html to include the .js files in /data
 //drawTranscripts(exonsOnEachTranscript, mutationsOnEachTranscript);
 //drawDNA(x0, x1);
 

@@ -46,6 +46,15 @@ svg {
     height: 100%;
 }
 
+/* */
+.highlightrect {
+	fill-opacity: 0;
+}
+
+.highlightrect:hover, .highlightrect-active {
+	fill-opacity: 0.4;
+}
+
 /* for handling scrolling, allow overflowing */ 
 .outer {
     width: 100%;
