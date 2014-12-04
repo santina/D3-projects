@@ -216,6 +216,7 @@ var drawMutations = function(transcriptID){
 	
 	//DNA.selectAll(".scaledMutationLine").remove();
 	if (!DNA.selectAll(".scaledMutationLine").empty()) {
+		DNA.selectAll("circle").transition().duration(750).attr("fill-opacity", 0).remove();
 		DNA.selectAll(".scaledMutationLine").transition().duration(750).attr("y2", 100).call(endall, function() {
 			DNA.selectAll(".scaledMutationLine").remove();
 	
@@ -399,11 +400,9 @@ var redrawMutations = function(className, exonsOnEachTranscript, mutationsOnEach
 					  .transition()
 					  	.duration(750)
 						.each(function(){
-							d3.select(d).transition()
-							.style("opacity", 0.5);
 
-							//test, why does this happen before the previous transition finishes? 
-							dotsGroup.append("circle")
+							//weird thing happened to the cirlces, but nice side effects
+							dotsGroup.append("circle").transition().duration(750)
 								.attr("cx", newposition)
 								.attr("cy", d.getAttribute("y2"))
 								.attr("r", 5)
