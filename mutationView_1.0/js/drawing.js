@@ -5,6 +5,7 @@
 
 //class is for a group of elements, id for one specific one... will fix that later. 
 
+
 var color = d3.scale.category10();
 
 
@@ -58,8 +59,7 @@ var drawTranscripts = function(exonsOnEachTranscript, mutationsOnEachTranscript)
 	var numItems = Object.keys(exonsOnEachTranscript).length;
 	
 	var chart = d3.select(".inner")
-	.style("height", transcriptHeight*(numItems+1))  
-	
+	.style("height", transcriptHeight*(numItems+1));
 	// jquery equivalent: 
 	// var chart = $('.inner').style("height", value);
 	
@@ -335,11 +335,10 @@ var drawSplicedRNA = function (className, exonsOnEachTranscript, mutationsOnEach
 	//make the inactive spliced RNA bar suddenly interactive, hinting you can click on it 
 	var RNAbar = d3.select("#mRNA_spliced"); //select by ID
 	RNAbar.on("click", function(){
-		//console.log(className);
 		redrawMutations(className, exonsOnEachTranscript, mutationsOnEachTranscript);
 		d3.select(this).style("fill", "red");
 		d3.select(this).classed("hover-active", false);
-		
+
 	});
 			
 	
@@ -356,7 +355,10 @@ var redrawMutations = function(className, exonsOnEachTranscript, mutationsOnEach
 
 	exonList = exonsOnEachTranscript[className]; 
 
-	var lines = d3.select(".DNA").select("svg").selectAll(".mutationLines")[0];
+	var dotsGroup = d3.select(".DNA").select("svg").append("g");
+	var lines = d3.select(".DNA").select("svg").selectAll(".mutationLines")[0]; 
+    // [0]: to get the first element in the array. (array in an array)
+
 	lines.forEach(function (d,i) {
 		var position = reverse_x(d.getAttribute("x1")); 
 		//console.log(position)
@@ -386,13 +388,37 @@ var redrawMutations = function(className, exonsOnEachTranscript, mutationsOnEach
 					d3.select(d).attr("class", "scaledMutationLine");
 
 					//move the line
-					d3.select(d).transition()
+
+					d3.transition()
 						.duration(750)
-						.attr("x1", newposition)
-						.attr("x2", newposition);
+						.each(function(){
+							d3.select(d).transition()
+							.attr("x1", newposition)
+							.attr("x2", newposition);
+						})
+					  .transition()
+					  	.duration(750)
+						.each(function(){
+							d3.select(d).transition()
+							.style("opacity", 0.5);
 
-					mutation_search(className, position);
+							//test, why does this happen before the previous transition finishes? 
+							dotsGroup.append("circle")
+								.attr("cx", newposition)
+								.attr("cy", d.getAttribute("y2"))
+								.attr("r", 5)
+								.attr("fill", "steelblue")
+								.attr("fill-opacity", 0.5);
+						});
 
+					// d3.select(d).transition()
+					// 	.duration(750)
+					// 	.attr("x1", newposition)
+					// 	.attr("x2", newposition);
+
+
+					//comment this out if using local.html
+					//mutation_search(className, position, newposition);
 
 					break;
 				}
@@ -422,9 +448,9 @@ var checkInRange = function(exonList, site){
 	return inRange; 
 }
 
-
 //enable those two if you want to run this without accessing cbioportal 
-// also fix the html to include the .js files in /data
-//drawTranscripts(exonsOnEachTranscript, mutationsOnEachTranscript);
-//drawDNA(x0, x1);
+//use local.html
+//drawDNA();
+//drawmRNA();
+//drawTranscripts(exonsOnEachTranscript, transcriptMutationList);
 

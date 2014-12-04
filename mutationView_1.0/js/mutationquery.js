@@ -53,7 +53,7 @@ var mutation_query  =
 };
 
 
-var mutation_search = function(geneID, site){
+var mutation_search = function(geneID, site, newPosition){
 
 	mutation_query.query.filtered.filter.bool.must[1].term["EFF.SNPeffTranscript_ID"] = geneID;
 	mutation_query.query.filtered.filter.bool.must[2].term["start"] = site;
@@ -65,11 +65,12 @@ var mutation_search = function(geneID, site){
 		crossDomain: true,
 		dataType: 'json',
 		data: JSON.stringify(mutation_query), 
-		async: true, 
+		async: false, 
 		success: function(response) {
 			console.log("Mutation search: success"); 
-			console.log(response);
+			//console.log(response);
 			mutationInfo[site] = response;
+			//drawMutationTrees(newPosition);
 		
 		},
 		error: function(err){
@@ -79,8 +80,22 @@ var mutation_search = function(geneID, site){
 	});
 }
 
-var drawMutationTrees = function(site){
-	
+
+
+var drawMutationTrees = function(){
+	var lines = d3.select(".DNA").select("svg").selectAll(".scaledMutationLine")[0]; 
+	var dotsContainer = d3.select(".DNA").select("svg");
+	var dotsGroup = dotsContainer.append("g");
+
+	lines.forEach(function (d,i){
+		dotsGroup.append("circle")
+		.attr("cx", d.getAttribute("x1"))
+		.attr("cy", d.getAttribute("y2"))
+		.attr("r", 5);
+
+
+	});
+
 }
 
 
