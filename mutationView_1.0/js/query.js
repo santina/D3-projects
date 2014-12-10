@@ -256,8 +256,6 @@ var getMutations = function(response, transcript_id){
 		]	
 	}
 
-	//initializing 
-
 	//fill the rest 
 	for (var i = 1 ; i < mutationList.length; i++){
 		transcriptMutationList[transcript_id].push(

@@ -1,3 +1,4 @@
+var example = 
 {
    "took": 4,
    "timed_out": false,
