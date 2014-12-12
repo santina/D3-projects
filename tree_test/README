@@ -1,0 +1,4 @@
+
+`var functionName = function(input){}` : the function needs to be used "after" the code 
+
+`function functionName(input){}` : the function can be used before or after the code 
