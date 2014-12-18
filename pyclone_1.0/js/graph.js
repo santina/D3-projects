@@ -128,24 +128,6 @@ d3.tsv("./data/results.tsv", function(error, data) {
 });
 
 
-
-
-
-
-
-
-/*testing out code on https://gist.github.com/sfrdmn/1437516 
-var mouseOverFunction = function(){
-	var circle = d3.select(this); 
-    circle.attr("fill", "red");
-	d3.select("infoBox").style("display", "block")
-	d3.select("p").append(d["mutation"]);
-}
-*/
-
-
-
-
 //=========================
 
 /*TO DO LIST : 
@@ -154,7 +136,5 @@ var mouseOverFunction = function(){
 - Hover over will change color
 - Color opacity to decrease the look of over clustering 
 - (omg) maybe select a certain region and graph will zoom into that ? 
-
-
 
 */
