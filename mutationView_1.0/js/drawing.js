@@ -447,9 +447,9 @@ var checkInRange = function(exonList, site){
 	return inRange; 
 }
 
-//enable those two if you want to run this without accessing cbioportal 
+//enable those three if you want to run this without accessing cbioportal 
 //use local.html
-//drawDNA();
-//drawmRNA();
-//drawTranscripts(exonsOnEachTranscript, transcriptMutationList);
+drawDNA();
+drawmRNA();
+drawTranscripts(exonsOnEachTranscript, transcriptMutationList);
 
