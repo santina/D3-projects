@@ -5,7 +5,7 @@ A d3-made scattered plot that reads in a .tsv file. So to view it, it has to be 
 
 ![pyclone](../images/pyclone.png)
 
-The scattered plot basically displays the output of a software called (Pyclone)[http://compbio.bccrc.ca/software/pyclone/]. Click on the link to read more about it. In shorts, the software looks at mutations and cellular prevalencies together to decide which mutations belong to the same clonal populations of cancer cells. 
+The scattered plot basically displays the output of a software called [Pyclone](http://compbio.bccrc.ca/software/pyclone/). Click on the link to read more about it. In shorts, the software looks at mutations and cellular prevalencies together to decide which mutations belong to the same clonal populations of cancer cells. 
 
 Either axis in the graph represents a tumour sample, and both tumours are from the same person. Each dot is a mutation (more information shows when hovered-over). 
 
