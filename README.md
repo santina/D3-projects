@@ -56,4 +56,4 @@ In order to achieve that I need to :
 
 ## Tree
 ![tree](/images/tree_branch.PNG)
-This is the tree I made as a test for Mutation View to see what is accomplishable and what are the remianing challenges before I integrate it with mutation view. 
+This is the tree I made as a test for Mutation View to see what is accomplishable and what are the remianing challenges before I integrate it with Mutation View. Right now, the design is that the leave nodes are the amino acids of the mutation, and their parents are the reference amino acids. Color of the nodes show which class of amino acids (hydrophobic, polar, or charged) they are and the color of the links between them indicate the type of mutation (missense, nonsense, silent). The color of the paths from the grey nodes to the reference amino acids indicate the degree of severity of that mutation.  Sorry I will add the legend soon. 
